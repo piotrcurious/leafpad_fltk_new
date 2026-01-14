@@ -1,30 +1,18 @@
 #!/bin/bash
 set -e
 
-xvfb-run --auto-servernum --server-args="-screen 0 1024x768x24" /bin/bash <<'EOF'
 # Start fluxbox in the background
 fluxbox &
 FLUXBOX_PID=$!
 sleep 1
 
 # Start the application
-leafpad_fltk_0.2vibe_wrap/src/leafpad &
+./src/leafpad &
 APP_PID=$!
+sleep 1
 
-# Wait for the window to appear
-timeout=10
-start_time=$(date +%s)
-WINDOW_ID=""
-while [ -z "$WINDOW_ID" ]; do
-    WINDOW_ID=$(xdotool search --pid $APP_PID 2>/dev/null | head -1)
-    current_time=$(date +%s)
-    elapsed_time=$((current_time - start_time))
-    if [ $elapsed_time -ge $timeout ]; then
-        echo "Timeout: Window not found."
-        exit 1
-    fi
-    sleep 0.5
-done
+# Find the window ID
+WINDOW_ID=$(xdotool search --pid $APP_PID | head -1)
 
 # Activate the window
 xdotool windowactivate $WINDOW_ID
@@ -55,4 +43,3 @@ xdotool key ctrl+q
 # Kill the background processes
 kill $APP_PID
 kill $FLUXBOX_PID
-EOF

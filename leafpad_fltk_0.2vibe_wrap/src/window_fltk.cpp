@@ -11,36 +11,6 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/fl_draw.H>
 
-class LineNumberWidget : public Fl_Widget {
-    EditorView* editor;
-public:
-    LineNumberWidget(int x, int y, int w, int h, EditorView* e) : Fl_Widget(x, y, w, h, 0) {
-        editor = e;
-    }
-    void draw() override {
-        fl_push_clip(x(), y(), w(), h());
-        fl_color(FL_LIGHT2);
-        fl_rectf(x(), y(), w(), h());
-        fl_color(FL_BLACK);
-
-        if (editor && editor->buffer()) {
-            fl_font(editor->textfont(), editor->textsize());
-            int top_line = editor->get_top_line_num();
-            int num_lines = editor->count_lines(0, editor->buffer()->length(), 1);
-            for (int i = 1; i <= num_lines; i++) {
-                char str[10];
-                sprintf(str, "%d", top_line + i -1);
-                int line_start = editor->buffer()->line_start(top_line + i - 2);
-                int x_pos = 0;
-                int y_pos = 0;
-                editor->position_to_xy(line_start, &x_pos, &y_pos);
-                fl_draw(str, x() + 4, y_pos);
-            }
-        }
-
-        fl_pop_clip();
-    }
-};
 
 // Callback for the "About" menu item
 static void on_about_cb(Fl_Widget*, void*) {
@@ -68,10 +38,10 @@ static void on_options_line_wrap(Fl_Widget* w, void* data) {
 
 static void on_options_line_numbers(Fl_Widget* w, void* data) {
     MainWindow* win = (MainWindow*)data;
-    if (win->line_numbers->visible()) {
-        win->line_numbers->hide();
+    if (win->editor->linenumber_width() > 0) {
+        win->editor->linenumber_width(0);
     } else {
-        win->line_numbers->show();
+        win->editor->linenumber_width(40);
     }
     win->redraw();
 }
@@ -89,9 +59,8 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
 
     begin();
 
-    editor = new EditorView(40, 30, w - 40, h - 30, this);
-    line_numbers = new LineNumberWidget(0, 30, 40, h - 30, editor);
-    line_numbers->hide();
+    editor = new EditorView(0, 30, w, h - 30, this);
+    editor->linenumber_width(0);
     Fl_Text_Buffer *buff = new Fl_Text_Buffer();
     editor->buffer(buff);
     undo_manager = new UndoManager(buff, editor, this);

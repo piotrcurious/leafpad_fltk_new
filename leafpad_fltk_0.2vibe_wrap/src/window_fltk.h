@@ -9,7 +9,6 @@
 #include "view_fltk.h"
 #include "UndoManager.h"
 
-class LineNumberWidget;
 struct Fl_Menu_Item;
 
 class MainWindow : public Fl_Window {
@@ -19,7 +18,6 @@ public:
     UndoManager* undo_manager;
     bool changed;
     bool line_wrap_enabled;
-    LineNumberWidget* line_numbers;
 
     MainWindow(int w, int h, const char* title);
 };

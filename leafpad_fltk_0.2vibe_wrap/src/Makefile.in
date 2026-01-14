@@ -291,8 +291,7 @@ leafpad_SOURCES = \
 	dialog_fltk.h dialog_fltk.cpp \
 	search_dialog.h search_dialog.cpp \
 	UndoManager.h UndoManager.cpp \
-	undo.h undo.cpp \
-	i18n.h
+	undo.h undo.cpp
 
 leafpad_LDADD = $(FLTK_LIBS) $(INTLLIBS)
 leafpad_CXXFLAGS = $(FLTK_CFLAGS)

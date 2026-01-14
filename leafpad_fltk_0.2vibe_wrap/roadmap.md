@@ -40,15 +40,15 @@ This document outlines the progress of porting Leafpad from GTK+ to FLTK.
 
 - [x] **Dialogs (`dialog_fltk.cpp`, `dialog_fltk.h`)**
   - [x] Implement "Help -> About".
-  - [ ] Implement search dialog.
+- [x] Implement search dialog.
   - [ ] Implement jump to line dialog.
   - [ ] Implement font selection dialog.
 
 ## Feature Parity
 
-- [ ] **Search and Replace**
-- [ ] **Line Numbers**
-- [ ] **Word Wrap**
+- [x] **Search and Replace**
+- [x] **Line Numbers**
+- [x] **Word Wrap**
 - [ ] **Auto Indent**
 - [ ] **Font Selection**
 - [ ] **Internationalization (i18n)**
