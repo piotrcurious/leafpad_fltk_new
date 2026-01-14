@@ -150,7 +150,7 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
     menu->user_data(this); // Pass window pointer to callbacks
 
     end();
-    resizable(editor);
+    resizable(this);
 }
 
 int MainWindow::handle(int event) {
@@ -181,9 +181,13 @@ int MainWindow::handle(int event) {
                         const char* line_num_str = fl_input("Jump to line:", "1");
                         if (line_num_str) {
                             int line_num = atoi(line_num_str);
-                            int pos = editor->buffer()->line_start(line_num - 1);
-                            editor->insert_position(pos);
-                            editor->show_insert_position();
+                            int total_lines = editor->buffer()->count_lines(0, editor->buffer()->length());
+                            if (line_num > 0 && line_num <= total_lines + 1) {
+                                int pos = editor->buffer()->line_start(line_num - 1);
+                                editor->insert_position(pos);
+                                editor->show_insert_position();
+                                editor->scroll(line_num - 1, 0);
+                            }
                         }
                     }
                     return 1;

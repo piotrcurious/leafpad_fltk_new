@@ -92,13 +92,11 @@ SearchWidget::SearchWidget(MainWindow* win, int x, int y, int w, int h) : Fl_Gro
 }
 
 void SearchWidget::show_widget() {
-    main_win->editor->resize(main_win->editor->x(), main_win->editor->y(), main_win->w(), main_win->h() - 90);
     this->show();
-    main_win->redraw();
+    main_win->resize(main_win->x(), main_win->y(), main_win->w(), main_win->h());
 }
 
 void SearchWidget::hide_widget() {
     this->hide();
-    main_win->editor->resize(main_win->editor->x(), main_win->editor->y(), main_win->w(), main_win->h() - 30);
-    main_win->redraw();
+    main_win->resize(main_win->x(), main_win->y(), main_win->w(), main_win->h());
 }
