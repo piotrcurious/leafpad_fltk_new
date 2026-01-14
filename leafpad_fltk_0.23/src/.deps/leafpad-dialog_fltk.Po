@@ -1,0 +1,11 @@
+leafpad-dialog_fltk.o: dialog_fltk.cpp /usr/include/stdc-predef.h \
+ dialog_fltk.h /usr/include/FL/fl_ask.H /usr/include/FL/Enumerations.H \
+ /usr/include/FL/abi-version.h /usr/include/FL/Fl_Export.H \
+ /usr/include/FL/fl_types.h
+/usr/include/stdc-predef.h:
+dialog_fltk.h:
+/usr/include/FL/fl_ask.H:
+/usr/include/FL/Enumerations.H:
+/usr/include/FL/abi-version.h:
+/usr/include/FL/Fl_Export.H:
+/usr/include/FL/fl_types.h:
