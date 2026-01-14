@@ -15,6 +15,7 @@ public:
     MainWindow* main_win;
 
     EditorView(int x, int y, int w, int h, MainWindow* win, const char* label = 0);
+    int handle(int event) override;
 };
 
 #endif // VIEW_FLTK_H

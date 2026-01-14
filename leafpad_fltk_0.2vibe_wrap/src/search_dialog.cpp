@@ -28,7 +28,6 @@ void SearchDialog::on_replace_cb(Fl_Widget* w, void* data) {
     const char* replace_text = dialog->replace_input->value();
 
     if (dialog->main_win->editor->buffer()->selected()) {
-        // If the selected text matches the find text, replace it
         if (strcmp(dialog->main_win->editor->buffer()->selection_text(), find_text) == 0) {
             dialog->main_win->editor->buffer()->replace_selection(replace_text);
         }
@@ -65,4 +64,11 @@ SearchDialog::SearchDialog(MainWindow* win) : Fl_Window(300, 150, "Find and Repl
     find_button->callback(on_find_cb, this);
     replace_button->callback(on_replace_cb, this);
     replace_all_button->callback(on_replace_all_cb, this);
+    callback(on_close_cb, this);
+}
+
+void SearchDialog::on_close_cb(Fl_Widget* w, void* data) {
+    SearchDialog* dialog = (SearchDialog*)data;
+    dialog->hide();
+    delete dialog;
 }

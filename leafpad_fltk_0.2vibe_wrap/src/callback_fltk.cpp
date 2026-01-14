@@ -10,7 +10,7 @@
 void on_file_new(Fl_Widget* w, void* v) {
     MainWindow* window = (MainWindow*)v;
     window->editor->buffer()->text("");
-    window->current_filename = NULL;
+    window->set_current_filename(NULL);
     window->changed = false;
 }
 
@@ -19,7 +19,8 @@ void on_file_open(Fl_Widget* w, void* v) {
     char* filename = fl_file_chooser("Open File", "*", "");
     if (filename) {
         window->editor->buffer()->loadfile(filename);
-        window->current_filename = filename;
+        window->set_current_filename(filename);
+        window->update_linenumber_width();
     }
 }
 
@@ -28,7 +29,7 @@ void on_file_save(Fl_Widget* w, void* v) {
     if (!window->current_filename) {
         char* filename = fl_file_chooser("Save File", "*", "");
         if (filename) {
-            window->current_filename = filename;
+            window->set_current_filename(filename);
         } else {
             return;
         }
@@ -41,7 +42,7 @@ void on_file_save_as(Fl_Widget* w, void* v) {
     MainWindow* window = (MainWindow*)v;
     char* filename = fl_file_chooser("Save File As", "*", "");
     if (filename) {
-        window->current_filename = filename;
+        window->set_current_filename(filename);
         window->editor->buffer()->savefile(window->current_filename);
     }
 }

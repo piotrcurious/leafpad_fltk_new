@@ -9,8 +9,6 @@
 #include "search_dialog.h"
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Text_Buffer.H>
-#include <FL/fl_draw.H>
-
 
 // Callback for the "About" menu item
 static void on_about_cb(Fl_Widget*, void*) {
@@ -36,20 +34,65 @@ static void on_options_line_wrap(Fl_Widget* w, void* data) {
     }
 }
 
-static void on_options_line_numbers(Fl_Widget* w, void* data) {
-    MainWindow* win = (MainWindow*)data;
-    if (win->editor->linenumber_width() > 0) {
-        win->editor->linenumber_width(0);
-    } else {
-        win->editor->linenumber_width(40);
+void MainWindow::update_linenumber_width() {
+    if (editor->linenumber_width() == 0) return;
+
+    int num_lines = editor->buffer()->count_lines(0, editor->buffer()->length());
+    int digits = 1;
+    if (num_lines > 9) digits = 2;
+    if (num_lines > 99) digits = 3;
+    if (num_lines > 999) digits = 4;
+    if (num_lines > 9999) digits = 5;
+    if (num_lines > 99999) digits = 6;
+
+    char str[10];
+    for (int i = 0; i < digits; i++) {
+        str[i] = '9';
     }
-    win->redraw();
+    str[digits] = 0;
+
+    fl_font(editor->textfont(), editor->textsize());
+    int width = (int)fl_width(str);
+    editor->linenumber_width(width + 10);
 }
 
 static void on_edit_find(Fl_Widget* w, void* data) {
     MainWindow* win = (MainWindow*)data;
     SearchDialog* dialog = new SearchDialog(win);
     dialog->show();
+}
+
+MainWindow::~MainWindow() {
+    if (current_filename) {
+        free(current_filename);
+    }
+}
+
+void MainWindow::set_current_filename(const char* f) {
+    if (current_filename) {
+        free(current_filename);
+    }
+    if (f) {
+        current_filename = strdup(f);
+    } else {
+        current_filename = NULL;
+    }
+}
+
+static void on_buffer_changed(int, int, int, int, const char*, void* data) {
+    MainWindow* win = (MainWindow*)data;
+    win->update_linenumber_width();
+}
+
+static void on_options_line_numbers(Fl_Widget* w, void* data) {
+    MainWindow* win = (MainWindow*)data;
+    if (win->editor->linenumber_width() > 0) {
+        win->editor->linenumber_width(0);
+    } else {
+        win->editor->linenumber_width(40);
+        win->update_linenumber_width();
+    }
+    win->redraw();
 }
 
 MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title) {
@@ -62,6 +105,7 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
     editor = new EditorView(0, 30, w, h - 30, this);
     editor->linenumber_width(0);
     Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+    buff->add_modify_callback(on_buffer_changed, this);
     editor->buffer(buff);
     undo_manager = new UndoManager(buff, editor, this);
 

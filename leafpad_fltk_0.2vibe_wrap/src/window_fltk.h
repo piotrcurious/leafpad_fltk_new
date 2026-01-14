@@ -20,6 +20,9 @@ public:
     bool line_wrap_enabled;
 
     MainWindow(int w, int h, const char* title);
+    ~MainWindow();
+    void update_linenumber_width();
+    void set_current_filename(const char* f);
 };
 
 #endif // WINDOW_FLTK_H

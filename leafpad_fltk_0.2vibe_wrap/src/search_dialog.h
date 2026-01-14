@@ -24,6 +24,7 @@ public:
     static void on_find_cb(Fl_Widget* w, void* data);
     static void on_replace_cb(Fl_Widget* w, void* data);
     static void on_replace_all_cb(Fl_Widget* w, void* data);
+    static void on_close_cb(Fl_Widget* w, void* data);
 };
 
 #endif // SEARCH_DIALOG_H
