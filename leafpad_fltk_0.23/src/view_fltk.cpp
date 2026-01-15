@@ -25,3 +25,9 @@ int EditorView::handle(int event) {
     }
     return Fl_Text_Editor::handle(event);
 }
+
+int EditorView::get_display_line_from_pos(int pos) {
+    int line_num;
+    position_to_line(pos, &line_num);
+    return line_num;
+}

@@ -1,0 +1,23 @@
+# Editor backup files
+*~
+
+# Compiled object dependencies
+*.Po
+
+# Build artifacts
+autom4te.cache
+configure
+config.status
+config.log
+Makefile
+Makefile.in
+stamp-h1
+depcomp
+install-sh
+missing
+leafpad
+*.o
+.deps
+test_output.txt
+manual_verification.png
+manual_verify.sh

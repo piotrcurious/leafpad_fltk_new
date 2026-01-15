@@ -202,6 +202,8 @@ int MainWindow::handle(int event) {
                                 int pos = editor->buffer()->line_start(line_num - 1);
                                 editor->insert_position(pos);
                                 editor->show_insert_position();
+                                int display_line = editor->get_display_line_from_pos(pos);
+                                editor->scroll(display_line, 0);
                             }
                         }
                     }

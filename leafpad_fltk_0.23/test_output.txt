@@ -1,1 +1,0 @@
-This is a very long line of text that should wrap around the screen if the line wrap feature is working correctly, but it should not be saved with newlines.
