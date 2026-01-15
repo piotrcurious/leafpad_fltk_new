@@ -41,5 +41,5 @@ sleep 0.5
 xdotool key ctrl+q
 
 # Kill the background processes
-kill $APP_PID
-kill $FLUXBOX_PID
+kill $APP_PID || true
+kill $FLUXBOX_PID || true
