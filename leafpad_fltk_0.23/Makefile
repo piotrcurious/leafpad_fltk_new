@@ -153,8 +153,8 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.h.in AUTHORS \
-	COPYING ChangeLog INSTALL NEWS README compile install-sh \
-	missing
+	COPYING ChangeLog INSTALL NEWS README compile depcomp \
+	install-sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -199,12 +199,12 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} '/home/curious/leafpad_fltk/leafpad_fltk_0.23/missing' aclocal-1.16
+ACLOCAL = ${SHELL} '/app/leafpad_fltk_0.23/missing' aclocal-1.16
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} '/home/curious/leafpad_fltk/leafpad_fltk_0.23/missing' autoconf
-AUTOHEADER = ${SHELL} '/home/curious/leafpad_fltk/leafpad_fltk_0.23/missing' autoheader
-AUTOMAKE = ${SHELL} '/home/curious/leafpad_fltk/leafpad_fltk_0.23/missing' automake-1.16
+AUTOCONF = ${SHELL} '/app/leafpad_fltk_0.23/missing' autoconf
+AUTOHEADER = ${SHELL} '/app/leafpad_fltk_0.23/missing' autoheader
+AUTOMAKE = ${SHELL} '/app/leafpad_fltk_0.23/missing' automake-1.16
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -236,7 +236,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} '/home/curious/leafpad_fltk/leafpad_fltk_0.23/missing' makeinfo
+MAKEINFO = ${SHELL} '/app/leafpad_fltk_0.23/missing' makeinfo
 MKDIR_P = /usr/bin/mkdir -p
 OBJEXT = o
 PACKAGE = leafpad
@@ -251,10 +251,10 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 0.8.19
-abs_builddir = /home/curious/leafpad_fltk/leafpad_fltk_0.23
-abs_srcdir = /home/curious/leafpad_fltk/leafpad_fltk_0.23
-abs_top_builddir = /home/curious/leafpad_fltk/leafpad_fltk_0.23
-abs_top_srcdir = /home/curious/leafpad_fltk/leafpad_fltk_0.23
+abs_builddir = /app/leafpad_fltk_0.23
+abs_srcdir = /app/leafpad_fltk_0.23
+abs_top_builddir = /app/leafpad_fltk_0.23
+abs_top_srcdir = /app/leafpad_fltk_0.23
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -274,7 +274,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/curious/leafpad_fltk/leafpad_fltk_0.23/install-sh
+install_sh = ${SHELL} /app/leafpad_fltk_0.23/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
