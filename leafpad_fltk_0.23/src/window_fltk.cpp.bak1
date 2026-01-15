@@ -21,25 +21,6 @@ static void on_about_cb(Fl_Widget*, void*) {
     show_about_dialog();
 }
 
-static void on_edit_goto(Fl_Widget*, void* data) {
-    MainWindow* win = (MainWindow*)data;
-    // We simulate a Ctrl+J keypress to trigger the logic inside handle()
-    // or call a dedicated method. 
-    const char* line_num_str = fl_input("Jump to line:", "1");
-    if (line_num_str) {
-        int line_num = atoi(line_num_str);
-        int total_lines = win->editor->buffer()->count_lines(0, win->editor->buffer()->length());
-        
-        if (line_num < 1) line_num = 1;
-        if (line_num > total_lines + 1) line_num = total_lines + 1;
-
-        int pos = win->editor->buffer()->skip_lines(0, line_num - 1);
-        win->editor->insert_position(pos);
-        win->editor->show_insert_position();
-        win->editor->take_focus();
-    }
-}
-
 static void on_options_line_wrap(Fl_Widget* w, void* data) {
     MainWindow* win = (MainWindow*)data;
     win->line_wrap_enabled = !win->line_wrap_enabled;
@@ -153,7 +134,6 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
             { "&Paste", FL_CTRL + 'v', (Fl_Callback *)on_edit_paste,this },
             { "Select &All", FL_CTRL + 'a', (Fl_Callback *)on_edit_select_all,this },
             { "&Find...", FL_CTRL + 'f', (Fl_Callback *)on_edit_find,this },
-			{ "&Go To...", FL_CTRL + 'j', (Fl_Callback *)on_edit_goto, this },
             { 0 },
         { "&Options", 0, 0, 0, FL_SUBMENU },
             { "&Line Wrap", 0, (Fl_Callback *)on_options_line_wrap, this, FL_MENU_TOGGLE },
@@ -213,7 +193,18 @@ int MainWindow::handle(int event) {
                     return 1;
                 case 'j':
                     {
-    				on_edit_goto(nullptr, this); // Reuse the logic defined above
+                        // Note: fl_input is a modal dialog and handles its own Escape key
+                        const char* line_num_str = fl_input("Jump to line:", "1");
+                        if (line_num_str) {
+                            int line_num = atoi(line_num_str);
+                            int total_lines = editor->buffer()->count_lines(0, editor->buffer()->length());
+                            if (line_num > 0 && line_num <= total_lines + 1) {
+                                int pos = editor->buffer()->line_start(line_num - 1);
+                                editor->insert_position(pos);
+                                editor->show_insert_position();
+                                editor->scroll(line_num - 1, 0);
+                            }
+                        }
                     }
                     return 1;
             }
