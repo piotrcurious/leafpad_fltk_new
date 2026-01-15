@@ -12,11 +12,14 @@
 
 struct Fl_Menu_Item;
 class SearchWidget;
+class JumpWidget; 
+
 
 class MainWindow : public Fl_Window {
 public:
     EditorView* editor;
     SearchWidget* search_widget;
+    JumpWidget* jump_widget; // New pointer
     std::string current_filename; // Changed from char* to std::string
     UndoManager* undo_manager;
     bool changed;

@@ -10,82 +10,34 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Text_Buffer.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Group.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <string>
 #include <cstring>
 #include <stdlib.h>
 
-/**
- * Internal Widget for "Jump to Line"
- * Designed as a small overlay that appears at the top-right
- */
-class JumpWidget : public Fl_Group {
-public:
-    Fl_Input* input;
+// Callback for the "About" menu item
+static void on_about_cb(Fl_Widget*, void*) {
+    show_about_dialog();
+}
 
-    JumpWidget(int x, int y, int w, int h) : Fl_Group(x, y, w, h) {
-        box(FL_THIN_UP_BOX);
-        color(FL_LIGHT3);
-        
-        // Input field for the line number
-        input = new Fl_Input(x + 60, y + 10, w - 70, h - 20, "Line:");
-        input->align(FL_ALIGN_LEFT);
-        input->when(FL_WHEN_ENTER_KEY); // Trigger callback on Enter
-        input->color(FL_WHITE);
-        
-        end();
-    }
-
-    int handle(int event) override {
-        // Dismiss if Escape is pressed while this group has focus
-        if (event == FL_KEYDOWN && Fl::event_key() == FL_Escape) {
-            this->hide();
-            // Parent window should return focus to editor
-            return 1;
-        }
-        return Fl_Group::handle(event);
-    }
-};
-
-// Callback for when user presses Enter in the JumpWidget
-static void on_jump_submit_cb(Fl_Widget* w, void* data) {
+static void on_edit_goto(Fl_Widget*, void* data) {
     MainWindow* win = (MainWindow*)data;
-    const char* val = win->jump_widget->input->value();
-    
-    if (val && strlen(val) > 0) {
-        int line_num = atoi(val);
-        // count_lines gives total \n characters
+    // We simulate a Ctrl+J keypress to trigger the logic inside handle()
+    // or call a dedicated method. 
+    const char* line_num_str = fl_input("Jump to line:", "1");
+    if (line_num_str) {
+        int line_num = atoi(line_num_str);
         int total_lines = win->editor->buffer()->count_lines(0, win->editor->buffer()->length());
         
-        // Bounds checking
         if (line_num < 1) line_num = 1;
         if (line_num > total_lines + 1) line_num = total_lines + 1;
 
-        // The Fix: skip_lines moves across logical lines (actual newlines)
-        // We start from 0 and skip (line_num - 1) lines to reach the start of line N.
         int pos = win->editor->buffer()->skip_lines(0, line_num - 1);
-        
         win->editor->insert_position(pos);
         win->editor->show_insert_position();
+        win->editor->take_focus();
     }
-    
-    win->jump_widget->hide();
-    win->editor->take_focus();
-}
-
-// Global callback for menu and shortcuts
-static void on_edit_goto(Fl_Widget*, void* data) {
-    MainWindow* win = (MainWindow*)data;
-    win->jump_widget->show();
-    win->jump_widget->input->value(""); // Clear previous
-    win->jump_widget->input->take_focus();
-}
-
-static void on_about_cb(Fl_Widget*, void*) {
-    show_about_dialog();
 }
 
 static void on_options_line_wrap(Fl_Widget* w, void* data) {
@@ -126,15 +78,20 @@ void MainWindow::update_linenumber_width() {
     editor->linenumber_width(width + 10);
 }
 
-MainWindow::~MainWindow() {}
 
+// Destructor is now empty because std::string cleans itself up
+MainWindow::~MainWindow() {
+}
+
+// Safer, simpler filename management
 void MainWindow::set_current_filename(const char* f) {
     if (f) {
-        current_filename = f;
+        current_filename = f; // Automatically copies the string
     } else {
         current_filename.clear();
     }
 
+    // Update window title
     if (current_filename.empty()) {
         this->label("Untitled - Leafpad");
     } else {
@@ -162,9 +119,9 @@ static void on_options_line_numbers(Fl_Widget* w, void* data) {
     }
     win->redraw();
 }
-
+// Constructor initialization
 MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title) {
-    current_filename = "";
+    current_filename = ""; // Initialized as empty string
     changed = false;
     line_wrap_enabled = false;
 
@@ -172,21 +129,14 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
 
     editor = new EditorView(0, 30, w, h - 30, this);
     editor->linenumber_width(0);
-    
-    // Initialize Search Widget (bottom)
     search_widget = new SearchWidget(this, 0, h - 60, w, 60);
     search_widget->hide();
-    
-    // Initialize Jump Widget (top-right overlay)
-    jump_widget = new JumpWidget(w - 210, 40, 200, 40);
-    jump_widget->hide();
-    jump_widget->input->callback(on_jump_submit_cb, this);
-
     Fl_Text_Buffer *buff = new Fl_Text_Buffer();
     buff->add_modify_callback(on_buffer_changed, this);
     editor->buffer(buff);
     undo_manager = new UndoManager(buff, editor, this);
 
+    // Menu setup... (Keeping your existing logic)
     static Fl_Menu_Item menu_items[] = {
         { "&File", 0, 0, 0, FL_SUBMENU },
             { "&New", FL_CTRL + 'n', (Fl_Callback *)on_file_new,this },
@@ -203,7 +153,7 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
             { "&Paste", FL_CTRL + 'v', (Fl_Callback *)on_edit_paste,this },
             { "Select &All", FL_CTRL + 'a', (Fl_Callback *)on_edit_select_all,this },
             { "&Find...", FL_CTRL + 'f', (Fl_Callback *)on_edit_find,this },
-            { "&Go To...", FL_CTRL + 'j', (Fl_Callback *)on_edit_goto, this },
+			{ "&Go To...", FL_CTRL + 'j', (Fl_Callback *)on_edit_goto, this },
             { 0 },
         { "&Options", 0, 0, 0, FL_SUBMENU },
             { "&Line Wrap", 0, (Fl_Callback *)on_options_line_wrap, this, FL_MENU_TOGGLE },
@@ -217,37 +167,24 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
 
     Fl_Menu_Bar* menu = new Fl_Menu_Bar(0, 0, w, 30);
     menu->copy(menu_items);
-    menu->user_data(this);
+    menu->user_data(this); // Pass window pointer to callbacks
 
     end();
-    resizable(editor); // Make editor resize with window
+    resizable(this);
 }
 
 int MainWindow::handle(int event) {
-    // 1. Dismiss JumpWidget if clicking anywhere else
-    if (event == FL_PUSH && jump_widget->visible()) {
-        if (!Fl::event_inside(jump_widget)) {
-            jump_widget->hide();
-            editor->take_focus();
-            return 1; 
-        }
-    }
-
-    // 2. Intercept Escape key
+    // Intercept Escape key
     if (event == FL_SHORTCUT && Fl::event_key() == FL_Escape) {
-        if (jump_widget->visible()) {
-            jump_widget->hide();
-            editor->take_focus();
-            return 1;
-        }
         if (search_widget->visible()) {
             search_widget->hide_widget();
-            return 1;
+            return 1; // Event handled, don't close the app
         }
+        // If search isn't open, we could return 0 to let the app close,
+        // or return 1 to disable Escape-to-close entirely.
         return 1; 
     }
 
-    // 3. Hotkey handling
     if (event == FL_KEYDOWN) {
         if (Fl::event_ctrl()) {
             switch (Fl::event_key()) {
@@ -255,20 +192,16 @@ int MainWindow::handle(int event) {
                     search_widget->show_widget();
                     search_widget->find_input->take_focus();
                     return 1;
-                case 'j':
-                    on_edit_goto(nullptr, this);
-                    return 1;
-                case 'g':
-                    if (search_widget->visible()) {
-                        if (Fl::event_state(FL_SHIFT)) {
-                            SearchWidget::on_find_prev_cb(search_widget->find_prev_button, search_widget);
-                        } else {
-                            SearchWidget::on_find_next_cb(search_widget->find_next_button, search_widget);
-                        }           
-                    }
-                    return 1;
-                // ... rest of keys ...
-                                case 'G':
+ 				case 'g':
+    				if (search_widget->visible()) {
+        			if (Fl::event_state(FL_SHIFT)) { // Check if Shift is held
+            			SearchWidget::on_find_prev_cb(search_widget->find_prev_button, search_widget);
+        			} else {
+            			SearchWidget::on_find_next_cb(search_widget->find_next_button, search_widget);
+        			}			
+    				}
+    				return 1;
+                case 'G':
                     if (search_widget->visible()) {
                         SearchWidget::on_find_prev_cb(search_widget->find_prev_button, search_widget);
                     }
@@ -278,30 +211,36 @@ int MainWindow::handle(int event) {
                     search_widget->show_widget();
                     search_widget->replace_input->take_focus();
                     return 1;
-                
+                case 'j':
+                    {
+    				on_edit_goto(nullptr, this); // Reuse the logic defined above
+                    }
+                    return 1;
             }
-            
+        } else if (Fl::event_key() == FL_F + 3) {
+            if (search_widget->visible()) {
+                if (Fl::event_shift()) {
+                    SearchWidget::on_find_prev_cb(search_widget->find_prev_button, search_widget);
+                } else {
+                    SearchWidget::on_find_next_cb(search_widget->find_next_button, search_widget);
+                }
+            }
+            return 1;
         }
-        
-        
     }
     return Fl_Window::handle(event);
 }
 
+
 void MainWindow::resize(int x, int y, int w, int h) {
     Fl_Window::resize(x, y, w, h);
     
-    int search_h = 60; 
+    int search_h = 60; // Fixed height for search bar
     if (search_widget->visible()) {
         editor->resize(0, 30, w, h - 30 - search_h);
         search_widget->resize(0, h - search_h, w, search_h);
     } else {
         editor->resize(0, 30, w, h - 30);
-        search_widget->resize(0, h, w, search_h);
-    }
-    
-    // Reposition jump widget to stay in top-right
-    if (jump_widget) {
-        jump_widget->resize(w - 210, 40, 200, 40);
+        search_widget->resize(0, h, w, search_h); // Move it off-screen/bottom
     }
 }
