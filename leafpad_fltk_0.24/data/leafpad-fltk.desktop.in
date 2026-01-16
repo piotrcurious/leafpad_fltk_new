@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=leafpad-fltk
+Comment=Simple FLTK Text Editor
+Exec=leafpad-fltk
+Icon=leafpad-fltk
+Terminal=false
+Type=Application
+Categories=Utility;TextEditor;
+Version=@VERSION@

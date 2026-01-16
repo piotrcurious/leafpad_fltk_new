@@ -1,0 +1,8 @@
+leafpad-fltk 0.24
+-----------------
+
+A simple text editor based on FLTK.
+
+This is a fork of the original Leafpad, ported to the FLTK toolkit.
+
+Homepage: https://github.com/jasonwysotski/leafpad-fltk
