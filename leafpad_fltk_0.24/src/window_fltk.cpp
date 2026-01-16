@@ -170,6 +170,9 @@ MainWindow::MainWindow(int w, int h, const char* title) : Fl_Window(w, h, title)
 
     begin();
 
+    // Set the X11 class name for the window
+    xclass("leafpad-fltk");
+
     editor = new EditorView(0, 30, w, h - 30, this);
     editor->linenumber_width(0);
     

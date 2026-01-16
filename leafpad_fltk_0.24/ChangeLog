@@ -1,0 +1,6 @@
+2024-01-16  Jason Wysotski  <jason@jasonwysotski.com>
+
+	* Renamed project to leafpad-fltk and updated version to 0.24.
+	* Migrated build system to GNU Autotools.
+	* Corrected X11 class name for proper window identification.
+	* Fixed various compilation and testing issues.

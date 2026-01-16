@@ -1,0 +1,4 @@
+Version 0.24 (January 2024)
+- Renamed binary to leafpad-fltk
+- Updated build system to Autotools
+- Fixed minor bugs.
